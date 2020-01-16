@@ -165,26 +165,32 @@ func (d *Helper) daemonSetFilter(pod corev1.Pod) podDeleteStatus {
 	// Such pods will be deleted if --force is used.
 	controllerRef := metav1.GetControllerOf(&pod)
 	if controllerRef == nil || controllerRef.Kind != appsv1.SchemeGroupVersion.WithKind("DaemonSet").Kind {
+		Println("here0")
 		return makePodDeleteStatusOkay()
 	}
 	// Any finished pod can be removed.
 	if pod.Status.Phase == corev1.PodSucceeded || pod.Status.Phase == corev1.PodFailed {
+		Println("here1")
 		return makePodDeleteStatusOkay()
 	}
 
 	if _, err := d.Client.AppsV1().DaemonSets(pod.Namespace).Get(controllerRef.Name, metav1.GetOptions{}); err != nil {
 		// remove orphaned pods with a warning if --force is used
 		if apierrors.IsNotFound(err) && d.Force {
+			Println("here2")
 			return makePodDeleteStatusWithWarning(true, err.Error())
 		}
 
+		Println("here3")
 		return makePodDeleteStatusWithError(err.Error())
 	}
 
 	if !d.IgnoreAllDaemonSets {
+		Println("here4")
 		return makePodDeleteStatusWithError(daemonSetFatal)
 	}
 
+	Println("here5")
 	return makePodDeleteStatusWithWarning(false, daemonSetWarning)
 }
 
