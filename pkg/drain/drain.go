@@ -177,6 +177,10 @@ func (d *Helper) GetPodsForDeletion(nodeName string) (*podDeleteList, []error) {
 				// short-circuit as soon as pod is filtered out
 				// at that point, there is no reason to run pod
 				// through any additional filters
+				pods = append(pods, podDelete{
+					pod:    pod,
+					status: status,
+				})
 				break
 			}
 		}
